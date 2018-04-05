@@ -18,7 +18,7 @@ EPEE requires context specific networks. Currently EPEE supports 426 context-spe
 
 1. Install [Anaconda](https://www.anaconda.com/download)
 
-2. [Download](https://cloud.biohpc.swmed.edu/index.php/s/KYxva7TgSA5NiyS) the networks and example data to run EPEE.
+2. Download the [networks](http://regulatorycircuits.org/download.html) and example [data](https://github.com/Cobanoglu-Lab/EPEE/tree/master/test/data) to run EPEE.
 
 3. Clone the git repository and set up the conda environment to run EPEE. We provided the environment files in `env` directory. If your machine has GPU card then we recommend that you use `epee_GPU.txt` file to create environment, otherwise create environment using `epee_CPU.txt`. To create conda environment use following command
 ```
