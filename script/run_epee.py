@@ -45,13 +45,17 @@ parser.add_argument("-s", "--step", help="optimizer learning-rate",
                     type=float, default=0.0001)
 parser.add_argument("-c", "--conditioning", help="Weight for the interactions \
                     not known", type=bool, default=True)
-parser.add_argument("-r", "--runs", help="Number of indpendent runs", type=int,
+parser.add_argument("-r", "--runs", help="Number of independent runs", type=int,
                     default=20)
 parser.add_argument("-i", "--iterations", help="Number of iterations",
                     type=int, default=100000)
-parser.add_argument("-norm", "--normalize", help="Normalize the weights",
+parser.add_argument("-norm", "--normalize", help="""
+                    Weight normalization strategy. Default:"minmax"
+                    Valid options: {"minmax", "log", "log10", "no"} """,
                     type=str, default='minmax')
-parser.add_argument("-model", "--model", help="model to run",
+parser.add_argument("-model", "--model", help="""
+                    Model regularization choice. Default: "epee-gcl"
+                    Valid options: {"epee-gcl","epee-l","no-penalty" """,
                     type=str, default='epee-gcl')
 parser.add_argument("-verbose", "--verbose",
                     help="logging info levels 10, 20, or 30",
@@ -71,15 +75,14 @@ parser.add_argument("-weight", "--weight",
 parser.add_argument("-multiprocess", "--multiprocess",
                     help="multiprocess the calculation of perturb and \
                     regulator scores", action='store_true')
-
 # NULL FLAG
 parser.add_argument("-null", "--null",
-                    help="Generate null scores by shuffling the labels",
+                    help="Generate null scores by label permutation",
                     action='store_true')
 # NULL SETTINGS
 parser.add_argument("-seed", "--seed", help="Starting seed number",
                     type=int, default=0)
-parser.add_argument("-perturb", "--perturb", help="True label perturb scores",
+parser.add_argument("-perturb", "--perturb", help="True label perturb scores. Required when running permutations for null model",
                     type=str, default=None)
 
 
