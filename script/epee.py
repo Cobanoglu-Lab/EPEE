@@ -1,4 +1,4 @@
-# Copyright 2018, Murat Can Cobanoglu
+# Copyright 2018, Viren Amin, Murat Can Cobanoglu
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 # 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
@@ -797,65 +797,6 @@ def get_null_regscores(dir, perturbed_genes):
                                         on='gene')
     null_score_list = null_regscore_df.set_index('gene').values.flatten()
     return null_score_list
-
-
-def get_apk(actual, predicted, k=10):
-    """To get average precision at k.
-
-    The function is used to get the average precision score.
-
-    Parameters
-    ----------
-    actual
-        array of genes that are ground truth
-    predicted
-        array of genes that want to query
-    k
-        For list of k objects to calculate the mean average precision
-
-    Returns
-    -------
-    float
-        average precision score
-
-    """
-    if len(predicted) > k:
-        predicted = predicted[:k]
-
-    score = 0.0
-    num_hits = 0.0
-
-    for i, p in enumerate(predicted):
-        if p in actual and p not in predicted[:i]:
-            num_hits += 1.0
-            score += num_hits / (i+1.0)
-
-    if not actual:
-        return 0.0
-    return score / min(len(actual), k)
-
-
-def get_mapk(actual, predicted, k=10):
-    """To get mean average precision at k.
-
-    The function is used to get the mean average precision score.
-
-    Parameters
-    ----------
-    actual
-        array of genes that are ground truth
-    predicted
-        array of genes that want to query
-    k
-        For list of k objects to calculate the mean average precision
-
-    Returns
-    -------
-    float
-        mean average precision score
-
-    """
-    return np.mean([get_apk(a, p, k) for a, p in zip(actual, predicted)])
 
 
 def get_median_rank_position(actual, predicted, n, model):
