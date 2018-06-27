@@ -555,7 +555,7 @@ def get_perturb_scores(Y1, y1, X1, w1, Y2, y2, X2, w2, S1, S2):
 def get_summary_scoresdf(df, metric='sum'):
     """To calculate scores from multiple models.
 
-    Each indepnedent model generates perturb and regulatory score. The function
+    Each independent model generates perturb and regulatory score. The function
     calculates summary score for each perturb gene and assigns that score to
     the gene. The function returns dataframe with summary scores sorted.
 
@@ -564,8 +564,8 @@ def get_summary_scoresdf(df, metric='sum'):
     df
         Pandas dataframe containing scores from multiple models
     metric
-        Metric used to summarize the score from multiple models. 'sum', 'mean'
-        and 'mean' are metric used to summarize the scores. Default = 'sum'
+        Metric used to summarize the score from multiple models. 
+        'sum', 'mean' and 'median' are valid options. Default = 'sum'
 
     Returns
     -------

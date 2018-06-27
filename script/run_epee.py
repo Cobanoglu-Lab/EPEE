@@ -49,15 +49,19 @@ parser.add_argument("-r", "--runs", help="Number of independent runs", type=int,
                     default=20)
 parser.add_argument("-i", "--iterations", help="Number of iterations",
                     type=int, default=100000)
-parser.add_argument("-norm", "--normalize", help="""
+parser.add_argument("-ag", "--aggregation", help="""
+                    Method for aggregating runs. Default: "sum"
+                    Valid options: {"mean", "median", "sum"} """,
+                    type=str, default='sum')
+parser.add_argument("-n", "--normalize", help="""
                     Weight normalization strategy. Default:"minmax"
                     Valid options: {"minmax", "log", "log10", "no"} """,
                     type=str, default='minmax')
-parser.add_argument("-model", "--model", help="""
+parser.add_argument("-m", "--model", help="""
                     Model regularization choice. Default: "epee-gcl"
                     Valid options: {"epee-gcl","epee-l","no-penalty" """,
                     type=str, default='epee-gcl')
-parser.add_argument("-verbose", "--verbose",
+parser.add_argument("-v", "--verbose",
                     help="logging info levels 10, 20, or 30",
                     type=int, default=10)
 # OPTIONAL SETTINGS
@@ -65,14 +69,14 @@ parser.add_argument("-eval", "--evaluate",
                     help="Evaluation mode available for Th1, Th2, Th17, \
                     Bmem, COAD, and AML",
                     type=str, default=None)
-parser.add_argument("-prefix", "--prefix",
+parser.add_argument("-pr", "--prefix",
                     help="Add prefix to the log",
                     type=str, default=strftime('%Y%m%d'))
 # OPTIONAL FLAGS
-parser.add_argument("-weight", "--weight",
+parser.add_argument("-w", "--store_weights",
                     help="Store all the inferred weights",
                     action='store_true')
-parser.add_argument("-multiprocess", "--multiprocess",
+parser.add_argument("-mp", "--multiprocess",
                     help="multiprocess the calculation of perturb and \
                     regulator scores", action='store_true')
 # NULL FLAG
@@ -80,9 +84,9 @@ parser.add_argument("-null", "--null",
                     help="Generate null scores by label permutation",
                     action='store_true')
 # NULL SETTINGS
-parser.add_argument("-seed", "--seed", help="Starting seed number",
+parser.add_argument("-d", "--seed", help="Starting seed number",
                     type=int, default=0)
-parser.add_argument("-perturb", "--perturb", help="True label perturb scores. Required when running permutations for null model",
+parser.add_argument("-p", "--perturb", help="True label perturb scores. Required when running permutations for null model",
                     type=str, default=None)
 
 
@@ -172,8 +176,8 @@ def run_epee():
         w1S1_s.append(w1_df)
         w2S2_s.append(w2_df)
 
-        # Output inferred weights if args.weight is True and args.null is False
-        if args.weight and not args.null:
+        # Output inferred weights if args.store_weights is True and args.null is False
+        if args.store_weights and not args.null:
             w1o_df.to_csv('{}/model/w1_{}.txt'.format(outdir, rid),
                           sep='\t')
             w2o_df.to_csv('{}/model/w2_{}.txt'.format(outdir, rid),
@@ -235,8 +239,8 @@ def run_epee():
             # else:
             regscore_df = pd.merge(regscore_df, regscore_runi, on='gene')
 
-    sum_genescore_df = get_summary_scoresdf(genescore_df)
-    sum_regscore_df = get_summary_scoresdf(regscore_df)
+    sum_genescore_df = get_summary_scoresdf(genescore_df, args.aggregation)
+    sum_regscore_df  = get_summary_scoresdf(regscore_df,  args.aggregation)
 
     if args.null:
         sum_regscore_df.to_csv('{}/null/regulator_scores_{}.txt'.format(
