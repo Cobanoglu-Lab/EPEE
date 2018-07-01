@@ -88,6 +88,9 @@ parser.add_argument("-d", "--seed", help="Starting seed number",
                     type=int, default=0)
 parser.add_argument("-p", "--perturb", help="True label perturb scores. Required when running permutations for null model",
                     type=str, default=None)
+parser.add_argument("-sg", "--shuffle_genes",
+                    help="Generate null scores by gene permutation",
+                    action='store_true')
 
 
 def get_scores(sel):
@@ -356,7 +359,9 @@ if __name__ == '__main__':
                                      args.networka, args.networkb,
                                      conditioning=args.conditioning,
                                      weightNormalize=args.normalize,
-                                     null=args.null, seed=args.seed)
+                                     null=args.null, 
+                                     shuffleGenes=args.shuffle_genes,
+                                     seed=args.seed)
     run_epee()
     run_end = time.time()
 
