@@ -2,6 +2,12 @@
 
 Effectors and Perturbation Estimation Engine (EPEE) a sparse linear model with graph constrained lasso regularization for differential analysis of RNA-seq data. The inputs are transcriptomic data for the two conditions under comparison, and context-specific TF-gene networks. If transcriptomic data is sequencing based, then data needs to be normalized to either TPM/FPKM/RPKM. EPEE is implemented in Python, using TensorFlow.
 
+### Citation
+
+Viren Amin, Didem Agac, Spencer D Barnes, Murat Can Cobanoglu, "Accurate differential analysis of transcription factor activity from gene expression", *Bioinformatics*, May 2019.
+
+https://doi.org/10.1093/bioinformatics/btz398
+
 ### Inputs
 
 - conditionA.txt and conditionB.txt

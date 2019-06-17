@@ -217,12 +217,11 @@ def _get_min_samples(Y1, Y2, X1, X2, min_samples, seed=0):
     return (mY1, mY2, mX1, mX2)
 
 
-def _shuffled_inputs(Y1, Y2, X1, X2, seed=0):
+def _shuffled_inputs(Y1, Y2, X1, X2, seed=0, shuffleGenes=False):
     """Shuffle the labels of the inputs samples.
 
     Function takes the expression dataframes of two conditions and shuffle the
-    labels. If the number of labels are not evenly distrubted, then the output
-    contains minimum samples of the two conditions.
+    labels. 
 
     Parameters
     ----------
@@ -236,6 +235,8 @@ def _shuffled_inputs(Y1, Y2, X1, X2, seed=0):
         Pandas dataframe containing TF expression across condition 2 samples
     seed
         Seed for random sampling. Default = 0.
+    shuffleGenes
+        Boolean flag for shuffling genes instead of labels. Default = False
 
     Returns
     -------
@@ -254,26 +255,38 @@ def _shuffled_inputs(Y1, Y2, X1, X2, seed=0):
 
     """
     np.random.seed(seed)
-    # min_samples = np.minimum(Y1.shape[1], Y2.shape[1])
-    # Y1, Y2, X1, X2 = _get_min_samples(Y1, Y2, X1, X2, min_samples,
-    #                                   seed=seed)
 
     Y1_2 = pd.merge(Y1, Y2, left_index=True, right_index=True, how='inner')
     X1_2 = pd.merge(X1, X2, left_index=True, right_index=True, how='inner')
-    samples = list(Y1_2.columns)
-    np.random.shuffle(samples)
 
     n_cols = Y1.shape[1]
-    sY1 = Y1_2.ix[:, samples[:n_cols]]
-    sY2 = Y1_2.ix[:, samples[n_cols:]]
-    sX1 = X1_2.ix[:, samples[:n_cols]]
-    sX2 = X1_2.ix[:, samples[n_cols:]]
+    if not shuffleGenes:
+        # We will shuffle labels
+        samples = list(Y1_2.columns)
+        np.random.shuffle(samples)
+        sY1 = Y1_2.loc[:, samples[:n_cols]]
+        sY2 = Y1_2.loc[:, samples[n_cols:]]
+        sX1 = X1_2.loc[:, samples[:n_cols]]
+        sX2 = X1_2.loc[:, samples[n_cols:]]
+    else:
+        # We will shuffle genes
+        genes = list(Y1_2.index)
+        np.random.shuffle(genes)
+        sY1 = Y1_2.loc[genes, Y1.columns] 
+        sY2 = Y1_2.loc[genes, Y2.columns]
+        for df in [sY1, sY2]:
+            df.index = Y1_2.index
+        tfs = list(X1_2.index)
+        sX1 = sY1.loc[tfs, X1.columns]
+        sX2 = sY2.loc[tfs, X2.columns]
+        for df in [sX1, sX2]:
+            df.index = tfs 
 
     return (sY1, sY2, sX1, sX2)
 
 
-def get_epee_inputs(c1, c2, n1, n2, conditioning=True,
-                    weightNormalize='minmax', null=False, seed=0):
+def get_epee_inputs(c1, c2, n1, n2, conditioning=True, weightNormalize='minmax',
+                    null=False, shuffleGenes=False, seed=0):
     """To generate inputs for EPEE.
 
     Function takes the network and expression data filenames and generates
@@ -298,7 +311,9 @@ def get_epee_inputs(c1, c2, n1, n2, conditioning=True,
         and 2. 'log' whether to log normalize weight+1. 'log10' whether to
         use log base 10 normalize weight+1.
     null
-        If null is true, then samples in condition1 and condition2 are shuffled
+        If flag is set, then samples in condition1 and condition2 are shuffled
+    shuffleGenes
+        If flag is set, we run null tests by shuffling the genes instead of labels
     seed
         Seed for random sampling
 
@@ -344,7 +359,8 @@ def get_epee_inputs(c1, c2, n1, n2, conditioning=True,
     X2 = Y2.ix[S2.columns, :]
     _eval_indices(Y1, Y2, S1, S2)
     if null:
-        Y1, Y2, X1, X2 = _shuffled_inputs(Y1, Y2, X1, X2, seed=seed)
+        Y1, Y2, X1, X2 = _shuffled_inputs(Y1, Y2, X1, X2, 
+                seed=seed, shuffleGenes=shuffleGenes)
     return (Y1, Y2, X1, X2, S1, S2, conditioning_val)
 
 
