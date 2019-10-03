@@ -788,7 +788,7 @@ def get_null_regscores(dir, perturbed_genes):
     dir
         Directory containing the shuffled labels inferred W's.
     perturbed_genes
-        list of perturbed genes used from the comparisions with true labels
+        list of perturbed genes used from the comparisons with true labels
 
     Returns
     -------

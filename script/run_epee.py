@@ -206,7 +206,7 @@ def run_epee():
 
     # For each pairs of inferred weights calculate perturb and regulator scores
     # logging.info('CALCULATE PERTURB AND REGULATOR SCORES')
-    logging.info('SCORES: pairwise comparision of all Y1 and Y2 models')
+    logging.info('SCORES: pairwise comparison of all Y1 and Y2 models')
 
     list_runs = list(range(args.runs))
     pairs = list(itertools.product(list_runs, list_runs))
@@ -339,16 +339,19 @@ if __name__ == '__main__':
             raise RuntimeError('Please provide perturb genes output generated with actual labels. --perturb <path to perturb_scores.txt>')
         os.makedirs(os.path.dirname('{}/null/'.format(outdir)),
                     exist_ok=True)
-        logging.basicConfig(filename='{}/null_log.txt'.format(outdir),
-                            level=args.verbose)
+        logfile = '{}/null_log.txt'.format(outdir)
         actual_perturb = pd.read_csv(args.perturb, index_col=0, sep='\t')
     else:
         os.makedirs(os.path.dirname('{}/model/'.format(outdir)),
                     exist_ok=True)
         os.makedirs(os.path.dirname('{}/scores/'.format(outdir)),
                     exist_ok=True)
-        logging.basicConfig(filename='{}/log.txt'.format(outdir),
-                            level=args.verbose)
+        logfile = '{}/log.txt'.format(outdir)
+
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    logging.basicConfig(filename=logfile,
+                        level=args.verbose)
 
     logging.info('####### {} STARTING ANALYSIS  #######'.format(args.prefix))
     logging.debug('Multiprocessing: {}'.format(args.multiprocess))
